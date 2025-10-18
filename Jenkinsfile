@@ -55,11 +55,7 @@ pipeline {
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
                         dir("${APP_PATH}") {
                             bat """
-                                dotnet sonarscanner begin `
-                                    /k:"${PROJECT_KEY}" `
-                                    /o:"${ORGANIZATION}" `
-                                    /d:sonar.host.url=https://sonarcloud.io `
-                                    /d:sonar.login=${SONAR_TOKEN}
+                                dotnet sonarscanner begin /k:"${PROJECT_KEY}" /o:"${ORGANIZATION}" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}
                                 dotnet build --configuration ${BUILD_CONFIG}
                                 dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}
                             """
