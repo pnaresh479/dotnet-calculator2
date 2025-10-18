@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'master' }  // Force the pipeline to run on the master node
+    agent { label 'built-in' }  // Force the pipeline to run on the master node
 
     environment {
         SONARQUBE_SERVER = 'sonarcloud'
