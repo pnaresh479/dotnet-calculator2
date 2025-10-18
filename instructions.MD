@@ -72,3 +72,11 @@ C# Dev Kit
   </Fragment>
 </Wix>
 '''
+
+* commanad to generate new GUID is
+    powershell "[guid]::NewGuid()"
+
+## Build MSI using WiX CLI
+
+* cd installer
+* wix build CalculatorApp.wxs -o CalculatorApp.msi
