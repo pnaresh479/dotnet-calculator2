@@ -1,12 +1,10 @@
 pipeline {
-    agent {
-        label any   // Ensure it runs on a any agent
-    }
+    agent { label 'master' }  // Force the pipeline to run on the master node
 
     environment {
-        SONARQUBE_SERVER = 'sonarcloud' // Name configured in Jenkins
-        PROJECT_KEY = 'dotnet-calculator2' // Replace with your actual SonarCloud project key
-        ORGANIZATION = 'pnaresh479' // Replace with your SonarCloud organization
+        SONARQUBE_SERVER = 'sonarcloud'
+        PROJECT_KEY = 'dotnet-calculator2'
+        ORGANIZATION = 'pnaresh479'
         BUILD_CONFIG = 'Release'
         APP_PATH = 'CalculatorApp'
         INSTALLER_PATH = 'Installer'
@@ -14,7 +12,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 echo '📦 Checking out code from GitHub...'
@@ -49,7 +46,7 @@ pipeline {
             }
         }
 
-        stage('Run SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 echo '🔍 Running SonarCloud analysis...'
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
@@ -68,7 +65,6 @@ pipeline {
             steps {
                 echo '📦 Building installer using WiX...'
                 dir("${INSTALLER_PATH}") {
-                    // Assuming Installer.wixproj references the published output folder
                     bat """
                         msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
                     """
