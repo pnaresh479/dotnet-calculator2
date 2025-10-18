@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <Package Name="CalculatorApp"
+           Manufacturer="Naresh"
+           Version="1.0.0"
+           UpgradeCode="12345678-ABCD-4321-ABCD-1234567890AB"
+           InstallerVersion="500"
+           Compressed="yes"
+           Scope="perMachine">
+
+    <!-- Define installation directory -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="CalculatorApp" />
+    </StandardDirectory>
+
+    <!-- Add Start Menu folder -->
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="CalculatorApp" />
+    </StandardDirectory>
+
+    <!-- Add Desktop -->
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="MainFeature" Title="Calculator Application" Level="1">
+      <ComponentRef Id="CalculatorAppExe" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- Main Application Executable -->
+    <Component Id="CalculatorAppExe" Guid="1d42a7f5-c0ed-41be-b82c-9549f68332fb" Directory="INSTALLFOLDER">
+      <File Id="CalculatorExe" Source="../CalculatorApp/bin/Release/net8.0/win-x64/publish/CalculatorApp.exe" KeyPath="yes" />
+      <File Id="Calculatordll" Source="../CalculatorApp/bin/Release/net8.0/win-x64/publish/CalculatorApp.dll" />
+      <File Id="Calculatorruntimeconfigjson" Source="../CalculatorApp/bin/Release/net8.0/win-x64/publish/CalculatorApp.runtimeconfig.json" />
+      <File Id="hostpolicydll" Source="../CalculatorApp/bin/Release/net8.0/win-x64/publish/hostpolicy.dll" />
+    </Component>
+<!-- 
+    <Component Id="CalculatorAppFiles" Guid="1d42a7f5-c0ed-41be-b82c-9549f68332fb" Directory="INSTALLFOLDER">
+      <File Source="../CalculatorApp/bin/Release/net8.0/win-x64/publish/*" />
+    </Component> -->
+
+    <!-- Desktop Shortcut -->
+    <Component Id="DesktopShortcut" Guid="cf224143-d3e0-49d5-83e8-661ac2975830" Directory="DesktopFolder">
+      <Shortcut Id="DesktopShortcut"
+                Name="CalculatorApp"
+                Description="Launch CalculatorApp"
+                Target="[INSTALLFOLDER]CalculatorApp.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveDesktopShortcut" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\CalculatorApp" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- Start Menu Shortcut -->
+    <Component Id="StartMenuShortcut" Guid="cf224143-d3e0-49d5-83e8-661ac2975831" Directory="ApplicationProgramsFolder">
+      <Shortcut Id="StartMenuShortcut"
+                Name="CalculatorApp"
+                Description="Launch CalculatorApp"
+                Target="[INSTALLFOLDER]CalculatorApp.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveStartMenuFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\CalculatorApp" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- Use built-in UI to choose install folder -->
+    <!-- <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" /> -->
+
+  </Package>
+</Wix>
