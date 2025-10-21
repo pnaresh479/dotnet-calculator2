@@ -9,6 +9,7 @@ pipeline {
         APP_PATH = 'CalculatorApp'
         INSTALLER_PATH = 'Installer'
         OUTPUT_DIR = 'output'
+        WIX_PATH           = "C:/users/admin/.dotnet/tools"
     }
 
     stages {
@@ -69,10 +70,12 @@ pipeline {
             steps {
                 echo '📦 Building installer using WiX...'
                 dir("${INSTALLER_PATH}") {
-                    bat """
-                        // msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
-                        wix build CalculatorApp.wxs -o CalculatorApp.msi
-                    """
+                    withEnv(["PATH=${env.PATH};${env.WIX_PATH}"]) {
+                        bat """
+                            // msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
+                            wix build CalculatorApp.wxs -o CalculatorApp.msi
+                        """
+                    }
                 }
             }
         }
