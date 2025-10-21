@@ -56,12 +56,10 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
                         dir("${APP_PATH}") {
-                            withEnv(["PATH=${env.PATH};${env.DOTNET}"]) {
-                                bat """
-                                    dotnet sonarscanner begin /k:"${PROJECT_KEY}" /o:"${ORGANIZATION}" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}
-                                    dotnet build --configuration ${BUILD_CONFIG}
-                                    dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}
-                                """
+                            withEnv(["PATH=${env.PATH};${env.DOTNET};${env.DOTNET}/tools"]) {
+                                bat 'dotnet sonarscanner begin /k:"${PROJECT_KEY}" /o:"${ORGANIZATION}" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}'
+                                bat "dotnet build --configuration ${BUILD_CONFIG}"
+                                bat "dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}"
                             }
                         }
                     }
