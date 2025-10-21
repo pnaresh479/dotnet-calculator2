@@ -70,7 +70,8 @@ pipeline {
                 echo '📦 Building installer using WiX...'
                 dir("${INSTALLER_PATH}") {
                     bat """
-                        msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
+                        // msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
+                        wix build CalculatorApp.wxs -o CalculatorApp.msi
                     """
                 }
             }
