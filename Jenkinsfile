@@ -42,7 +42,7 @@ pipeline {
             steps {
                 echo '🚀 Publishing application for installer...'
                 dir("${APP_PATH}") {
-                    bat "dotnet publish -c ${BUILD_CONFIG} -o ../${OUTPUT_DIR}"
+                    bat "dotnet publish -c ${BUILD_CONFIG} -r win-x64 --self-contained true"
                 }
             }
         }
