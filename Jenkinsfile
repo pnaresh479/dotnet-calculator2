@@ -130,6 +130,7 @@ pipeline {
                             bat 'dotnet tool run dotnet-sonarscanner end /d:sonar.login=' + SONAR_TOKEN
                         }
                     }
+                }
             }
         }
 
