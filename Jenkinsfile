@@ -72,7 +72,6 @@ pipeline {
                 dir("${INSTALLER_PATH}") {
                     withEnv(["PATH=${env.PATH};${env.WIX_PATH}"]) {
                         bat """
-                            // msbuild Installer.wixproj /p:Configuration=${BUILD_CONFIG} /p:OutputPath=..\\InstallerOutput
                             wix build CalculatorApp.wxs -o CalculatorApp.msi
                         """
                     }
