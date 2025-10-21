@@ -11,6 +11,7 @@ pipeline {
         OUTPUT_DIR       = 'output'
         WIX_PATH         = "C:/users/admin/.dotnet/tools"
         DOTNET           = "C:/Program Files/dotnet/sdk"
+        JAVA_HOME        = "C:/DevTools/java/openjdk21/jdk-21.0.2"
     }
 
     stages {
@@ -113,21 +114,24 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
                         dir("${APP_PATH}") {
-                            // Ensure local tool manifest is used
-                            bat 'dotnet tool restore'
+                            withEnv(["PATH=${env.PATH};${env.JAVAHOME}"]) {
+                                echo '🛠️ Preparing to run SonarCloud analysis...'
+                                // Ensure local tool manifest is used
+                                bat 'dotnet tool restore'
 
-                            // Diagnostic: Check dotnet and tool availability
-                            bat 'dotnet --info'
-                            bat 'dotnet tool list'
+                                // Diagnostic: Check dotnet and tool availability
+                                bat 'dotnet --info'
+                                bat 'dotnet tool list'
 
-                            // Begin SonarCloud analysis using local tool
-                            bat 'dotnet tool run dotnet-sonarscanner begin /k:"' + PROJECT_KEY + '" /o:"' + ORGANIZATION + '" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=' + SONAR_TOKEN
+                                // Begin SonarCloud analysis using local tool
+                                bat 'dotnet tool run dotnet-sonarscanner begin /k:"' + PROJECT_KEY + '" /o:"' + ORGANIZATION + '" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=' + SONAR_TOKEN + '"/d:sonar.scanner.javaExePath=' + ${env.JAVA_HOME} + '/bin/java.exe"'
 
-                            // Build the project
-                            bat "dotnet build --configuration ${BUILD_CONFIG}"
+                                // Build the project
+                                bat "dotnet build --configuration ${BUILD_CONFIG}"
 
-                            // End SonarCloud analysis
-                            bat 'dotnet tool run dotnet-sonarscanner end /d:sonar.login=' + SONAR_TOKEN
+                                // End SonarCloud analysis
+                                bat 'dotnet tool run dotnet-sonarscanner end /d:sonar.login=' + SONAR_TOKEN
+                            }
                         }
                     }
                 }
