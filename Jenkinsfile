@@ -70,6 +70,7 @@ pipeline {
         stage('SonarQube Analysis') {
         steps {
             echo '🔍 Starting SonarCloud analysis...'
+            echo 'applicaiton path is : ' + "${APP_PATH}"
 
             // Bind SonarCloud token securely
             withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
