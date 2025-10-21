@@ -10,7 +10,7 @@ pipeline {
         INSTALLER_PATH   = 'Installer'
         OUTPUT_DIR       = 'output'
         WIX_PATH         = "C:/users/admin/.dotnet/tools"
-        DOTNET           = "C:\Program Files\dotnet\sdk"
+        DOTNET           = "C:/Program Files/dotnet/sdk"
     }
 
     stages {
