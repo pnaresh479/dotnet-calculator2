@@ -73,12 +73,12 @@ pipeline {
             echo 'applicaiton path is : ' + "${APP_PATH}"
 
             // Bind SonarCloud token securely
-            withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
+            withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                 // Set SonarQube environment (if configured in Jenkins)
                 echo 'Setting SonarQube environment...'
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
                     // Navigate to your application directory
-                    echo 'inside sonarsube environment section...'
+                    echo 'inside sonarcube environment section...'
                     dir("${APP_PATH}") {
                         echo 'inside the application directory...'
                         // Extend PATH to include dotnet tools (adjust if needed)
