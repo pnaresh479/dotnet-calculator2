@@ -124,7 +124,7 @@ pipeline {
                                 bat 'dotnet tool list'
 
                                 // Begin SonarCloud analysis using local tool
-                                bat 'dotnet tool run dotnet-sonarscanner begin /k:"' + PROJECT_KEY + '" /o:"' + ORGANIZATION + '" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=' + SONAR_TOKEN + '"/d:sonar.scanner.javaExePath=' + ${env.JAVA_HOME} + '/bin/java.exe"'
+                                bat 'dotnet tool run dotnet-sonarscanner begin /k:"' + PROJECT_KEY + '" /o:"' + ORGANIZATION + '" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=' + SONAR_TOKEN + '"/d:sonar.scanner.javaExePath=' + env.JAVA_HOME + '/bin/java.exe"'
 
                                 // Build the project
                                 bat "dotnet build --configuration ${BUILD_CONFIG}"
