@@ -82,7 +82,9 @@ pipeline {
         stage('Archive Artifacts') {
             steps {
                 echo '🗄️ Archiving installer output...'
-                archiveArtifacts artifacts: 'InstallerOutput/**/*.msi', fingerprint: true
+                dir("${INSTALLER_PATH}") {
+                    archiveArtifacts artifacts: 'CalculatorApp.msi', fingerprint: true
+                }
             }
         }
     }
