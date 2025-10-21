@@ -48,24 +48,57 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                echo '🔍 Running SonarCloud analysis...'
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         echo '🔍 Running SonarCloud analysis...'
                 
-                // 👇 Bind your actual Jenkins credential ID here
-                withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
-                    withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                        dir("${APP_PATH}") {
-                            withEnv(["PATH=${env.PATH};${env.DOTNET};C:/Users/admin/.dotnet/tools"]) {
-                                bat 'dotnet sonarscanner begin /k:"${PROJECT_KEY}" /o:"${ORGANIZATION}" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}'
-                                bat "dotnet build --configuration ${BUILD_CONFIG}"
-                                bat "dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}"
-                            }
+        //         // 👇 Bind your actual Jenkins credential ID here
+        //         withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
+        //             withSonarQubeEnv("${SONARQUBE_SERVER}") {
+        //                 dir("${APP_PATH}") {
+        //                     withEnv(["PATH=${env.PATH};${env.DOTNET};C:/Users/admin/.dotnet/tools"]) {
+        //                         bat 'dotnet sonarscanner begin /k:"${PROJECT_KEY}" /o:"${ORGANIZATION}" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}'
+        //                         bat "dotnet build --configuration ${BUILD_CONFIG}"
+        //                         bat "dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}"
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        stage('SonarQube Analysis') {
+        steps {
+            echo '🔍 Starting SonarCloud analysis...'
+
+            // Bind SonarCloud token securely
+            withCredentials([string(credentialsId: 'sonarcloud-token-jenkins', variable: 'SONAR_TOKEN')]) {
+                // Set SonarQube environment (if configured in Jenkins)
+                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                    // Navigate to your application directory
+                    dir("${APP_PATH}") {
+                        // Extend PATH to include dotnet tools (adjust if needed)
+                        withEnv(["PATH=${env.PATH};C:\\Users\\${env.USERNAME}\\.dotnet\\tools"]) {
+
+                            // 🔧 Diagnostic: Check dotnet and sonarscanner availability
+                            bat 'where dotnet'
+                            bat 'dotnet --info'
+                            bat 'dotnet tool list -g'
+
+                            // 🔍 Begin SonarCloud analysis
+                            bat "dotnet sonarscanner begin /k:\"${PROJECT_KEY}\" /o:\"${ORGANIZATION}\" /d:sonar.host.url=https://sonarcloud.io /d:sonar.login=${SONAR_TOKEN}"
+
+                            // 🛠 Build the project
+                            bat "dotnet build --configuration ${BUILD_CONFIG}"
+
+                            // ✅ End SonarCloud analysis
+                            bat "dotnet sonarscanner end /d:sonar.login=${SONAR_TOKEN}"
                         }
                     }
                 }
             }
         }
+    }
 
         stage('Build Installer (WiX)') {
             steps {
