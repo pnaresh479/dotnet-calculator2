@@ -13,6 +13,8 @@ pipeline {
         DOTNET           = "C:/Program Files/dotnet/sdk"
         JAVA_HOME        = "C:/DevTools/java/openjdk21/jdk-21.0.2"
         CODE_SIGN_CERT   = "C://code-sign-certificates"  
+        SIGN_TOOL_PATH   = "C://Program Files (x86)//Windows Kits//10//bin//10.0.19041.0//x64
+
     }
 
     stages {
@@ -157,10 +159,12 @@ pipeline {
                 withCredentials([string(credentialsId: 'codesign-password', variable: 'CODE_SIGN_PASSWORD')]) {
                     echo '🔏 Signing the installer...'
                     dir("${INSTALLER_PATH}") {
-                        // Replace with your actual signing command and parameters
-                        bat """
-                            signtool sign  /f "${env.CODE_SIGN_CERT}/my_cert.pfx" /p "${CODE_SIGN_PASSWORD}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 CalculatorApp.msi
-                        """
+                        withEnv(["PATH=${env.PATH};${env.SIGN_TOOL_PATH}"]) {
+                            // Replace with your actual signing command and parameters
+                            bat """
+                                signtool sign  /f "${env.CODE_SIGN_CERT}/my_cert.pfx" /p "${CODE_SIGN_PASSWORD}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 CalculatorApp.msi
+                            """
+                        }
                     }
                 }
             }
@@ -170,9 +174,11 @@ pipeline {
             steps {
                 echo '🔍 Verifying the code signature...'
                 dir("${INSTALLER_PATH}") {
-                    bat """
-                        signtool verify /pa /v CalculatorApp.msi
-                    """
+                    withEnv(["PATH=${env.PATH};${env.SIGN_TOOL_PATH}"]) {
+                        bat """
+                            signtool verify /pa /v CalculatorApp.msi
+                        """
+                    }
                 }
             }
         }
