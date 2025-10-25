@@ -13,7 +13,7 @@ pipeline {
         DOTNET           = "C:/Program Files/dotnet/sdk"
         JAVA_HOME        = "C:/DevTools/java/openjdk21/jdk-21.0.2"
         CODE_SIGN_CERT   = "C://code-sign-certificates"  
-        SIGN_TOOL_PATH   = "C://Program Files (x86)//Windows Kits//10//bin//10.0.19041.0//x64
+        SIGN_TOOL_PATH   = "C://Program Files (x86)//Windows Kits//10//bin//10.0.19041.0//x64"
     }
 
     stages {
