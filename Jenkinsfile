@@ -12,6 +12,7 @@ pipeline {
         WIX_PATH         = "C:/users/admin/.dotnet/tools"
         DOTNET           = "C:/Program Files/dotnet/sdk"
         JAVA_HOME        = "C:/DevTools/java/openjdk21/jdk-21.0.2"
+        CODE_SIGN_CERT   = "C://code-sign-certificates"  
     }
 
     stages {
@@ -147,6 +148,31 @@ pipeline {
                             wix build CalculatorApp.wxs -o CalculatorApp.msi
                         """
                     }
+                }
+            }
+        }
+
+        stage('sign Installer') {
+            steps {
+                withCredentials([string(credentialsId: 'codesign-password', variable: 'CODE_SIGN_PASSWORD')]) {
+                    echo '🔏 Signing the installer...'
+                    dir("${INSTALLER_PATH}") {
+                        // Replace with your actual signing command and parameters
+                        bat """
+                            signtool sign  /f "${env.CODE_SIGN_CERT}/my_cert.pfx" /p "${CODE_SIGN_PASSWORD}" /tr http://timestamp.digicert.com /td sha256 /fd sha256 CalculatorApp.msi
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('codesign verification') {
+            steps {
+                echo '🔍 Verifying the code signature...'
+                dir("${INSTALLER_PATH}") {
+                    bat """
+                        signtool verify /pa /v CalculatorApp.msi
+                    """
                 }
             }
         }
